@@ -1,7 +1,4 @@
-import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pandapostdev/firebase/auth.dart';
 import 'package:pandapostdev/screens/home.dart';
 
@@ -13,47 +10,8 @@ class AuthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: FlutterSplashScreen.fadeIn(
-        backgroundColor: Colors.white,
-        duration: const Duration(milliseconds: 1000),
-        onInit: () {
-          debugPrint("On Init");
-        },
-        onEnd: () {
-          try {
-            // Hata oluşturabilecek kodlar buraya gelir
-          } catch (error) {
-            debugPrint("Error in onEnd: $error");
-          }
-        },
-        childWidget: SizedBox(
-          height: 500,
-          width: 300,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/images/panda_four.png',
-                  height: 400,
-                  width: 300,
-                ),
-                Text(
-                  "Panda Post",
-                  style: GoogleFonts.kanit(
-                      color: Colors.lightGreen.shade800,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold),
-                )
-              ],
-            ),
-          ),
-        ),
-        nextScreen: FirebaseAuth.instance.currentUser == null
-            ? AuthPage()
-            : HomeScreen(),
-      ),
+      // home: MySplashScreen(nextScreen: AuthPage),
+      home: AuthPage(),
     );
   }
 }
@@ -122,8 +80,6 @@ class AuthPage extends StatelessWidget {
                                   bool result =
                                       await _authMethods.signInWithGoogle();
                                   if (result) {
-                                    // Navigator.of(context)
-                                    //     .pushReplacementNamed('/home');
                                     Navigator.push(
                                         context,
                                         new MaterialPageRoute(

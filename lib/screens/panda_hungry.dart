@@ -10,7 +10,12 @@ class PandaHungryScreen extends StatelessWidget {
         title: Text('Panda Hungry'),
       ),
       body: Container(
-        child: Text('Pnda hugryyy'),
+        child: Column(
+          children: [
+            Text('Pnda hugryyy'),
+            Text('31'),
+          ],
+        ),
       ),
     );
   }

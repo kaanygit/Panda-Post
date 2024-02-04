@@ -1,3 +1,4 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,6 +11,8 @@ import 'package:pandapostdev/screens/flag.dart';
 import 'package:pandapostdev/screens/important.dart';
 import 'package:pandapostdev/screens/notes.dart';
 import 'package:pandapostdev/screens/panda_hungry.dart';
+import 'package:pandapostdev/services/notes_services.dart';
+import 'package:pandapostdev/widgets/home_bar_screen.dart';
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: <String>[
@@ -28,15 +31,31 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nameControllerTaskName = TextEditingController();
   GoogleSignInAccount? currentUser;
   late String username;
+  List<Map<String, dynamic>> notesList = [];
   final FirestoreMethods _firestoreMethods = FirestoreMethods();
+  late bool flagButton = false;
+  final NotesServices notesServices = NotesServices();
+  bool importantStartButton = false;
+
+  final List<String> scrollAxisRowList = [
+    "All",
+    "Work",
+    "Important",
+    "Flag",
+    "To-do"
+  ];
+  int activeIndex = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     username = "";
+    fetchData();
+
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
         print("Kullanıcı outurumu kapattı");
@@ -48,7 +67,14 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     });
-    // _nameController.dispose();
+  }
+
+  void fetchData() async {
+    await notesServices.fetchNotesData();
+    setState(() {
+      notesList = notesServices.notesList;
+      print(notesList);
+    });
   }
 
   Future<void> handleSignOut() async {
@@ -61,342 +87,329 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: appTopBar(),
       floatingActionButton: floatEditingButton(),
-      backgroundColor: Colors.grey.shade200,
-      drawer: burgerMenuDrawer(context),
+      endDrawer: burgerMenuDrawer(context),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
           child: Column(
             children: [
-              Container(
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Image.asset(
-                      'assets/images/panda_two.png',
-                      height: 100,
-                      width: 100,
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          "Welcome",
-                          style: GoogleFonts.kanit(
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "${username}",
-                          style: GoogleFonts.kanit(
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                decoration: BoxDecoration(
-                    color: Colors.lightGreen.shade400,
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
-              ),
-              SizedBox(
-                height: 25,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    child: AspectRatio(
-                      aspectRatio: 1.5,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.lightGreen.shade400,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
-                        child: Column(
-                          children: [
-                            Text(
-                              "Notes",
-                              style: GoogleFonts.kanit(
-                                  fontSize: 25,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            Spacer(),
-                            Text(
-                              "98",
-                              style: GoogleFonts.kanit(
-                                  fontSize: 25,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  Expanded(
-                    child: AspectRatio(
-                      aspectRatio: 1.5,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.lightGreen.shade400,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Important",
-                              style: GoogleFonts.kanit(
-                                  fontSize: 25,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            Spacer(),
-                            Text(
-                              "15",
-                              style: GoogleFonts.kanit(
-                                  fontSize: 25,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 25,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    color: Colors.lightGreen.shade400,
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Image.asset(
-                      'assets/images/panda_one.png',
-                      width: 100,
-                      height: 100,
-                    ),
-                    Column(
-                      children: [Text("Hungry"), Text("bambu ver")],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 25,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    child: Text(
-                      "Notes",
-                      style: GoogleFonts.kanit(
-                          fontSize: 20,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                width: 2, color: Colors.lightGreen.shade400))),
-                  ),
-                  Container(
-                    child: Text("Important",
-                        style: GoogleFonts.kanit(
-                            fontSize: 20,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold)),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                width: 2, color: Colors.lightGreen.shade400))),
-                  ),
-                  Container(
-                    child: Text("Flag",
-                        style: GoogleFonts.kanit(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold)),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                width: 2, color: Colors.lightGreen.shade400))),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 25,
-              ),
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
+                    for (int i = 0; i < scrollAxisRowList.length; i++)
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            activeIndex = i;
+                            HomeBarScreen(activeIndex);
+                          });
+                          print("${scrollAxisRowList[i]} button");
+                        },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 15),
+                          padding: EdgeInsets.all(8),
                           child: Column(
                             children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("Task Name"),
-                                  Text("saat"),
-                                ],
+                              Text(
+                                scrollAxisRowList[i] == "All"
+                                    ? "All(${notesList.length})"
+                                    : scrollAxisRowList[i],
+                                style: googleFonts(
+                                    20,
+                                    activeIndex == i
+                                        ? Colors.lightGreen.shade800
+                                        : Colors.grey,
+                                    FontWeight.normal),
                               ),
-                              SizedBox(
-                                height: 7,
-                              ),
-                              Container(
-                                  child: Text(
-                                      "amkşsgmkşasgmkşasgmkşasgmkşasgmkşasgmkşagsmkşagsmkşasgmkşgasm")),
-                              SizedBox(
-                                height: 7,
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("Tarih"),
-                                  Text("flag"),
-                                ],
-                              ),
+                              if (activeIndex == i)
+                                Container(
+                                    margin: EdgeInsets.only(top: 2),
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                color: Colors.black,
+                                                width: 2)))),
                             ],
                           ),
                         ),
-                        decoration: BoxDecoration(
-                            color: Colors.lightGreen.shade400,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20)))),
+                      ),
                   ],
                 ),
               ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 15),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("Task Name"),
-                                  Text("saat"),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 7,
-                              ),
-                              Container(
-                                  child: Text(
-                                      "amkşsgmkşasgmkşasgmkşasgmkşasgmkşasgmkşagsmkşagsmkşasgmkşgasm")),
-                              SizedBox(
-                                height: 7,
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("Tarih"),
-                                  Text("flag"),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        decoration: BoxDecoration(
-                            color: Colors.lightGreen.shade400,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20)))),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
+              activeIndex < 1
+                  ? Container(
+                      padding: EdgeInsets.only(top: 20),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 15),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text("Task Name"),
-                                        Text("sağ"),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 7,
-                                    ),
-                                    Container(
-                                        child: Text(
-                                            "amkşsgmkşasgmkşasgmkşasgmkşasgmkşasgmkşagsmkşagsmkşasgmkşgasm")),
-                                    SizedBox(
-                                      height: 7,
-                                    ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text("Tarih"),
-                                        Text("sağ"),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pushNamed(context, '/notes');
+                                },
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        color: colorsThree),
+                                    child: Stack(children: [
+                                      Column(
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.centerLeft,
+                                            child: Image.asset(
+                                              "assets/images/panda_two.png",
+                                              width: 150,
+                                            ),
+                                          ),
+                                          Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "All Notes",
+                                                style: googleFonts(
+                                                    20,
+                                                    Colors.black,
+                                                    FontWeight.normal),
+                                              )),
+                                          Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "${notesList.length} Notes",
+                                                style: googleFonts(
+                                                    15,
+                                                    Colors.grey.shade800,
+                                                    FontWeight.normal),
+                                              )),
+                                        ],
+                                      ),
+                                    ])),
                               ),
+                              Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: colorsOne),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(context, '/work');
+                                    },
+                                    child: Container(
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.centerRight,
+                                            child: Image.asset(
+                                              "assets/images/panda_three.png",
+                                              width: 150,
+                                            ),
+                                          ),
+                                          Container(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                "Work",
+                                                style: googleFonts(
+                                                    20,
+                                                    Colors.black,
+                                                    FontWeight.normal),
+                                              )),
+                                          Container(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                "0 Notes",
+                                                style: googleFonts(
+                                                    15,
+                                                    Colors.grey.shade800,
+                                                    FontWeight.normal),
+                                              )),
+                                        ],
+                                      ),
+                                    ),
+                                  )),
+                            ],
+                          )),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Container(
                               decoration: BoxDecoration(
-                                  color: Colors.lightGreen.shade400,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20)))),
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: colorsTwo),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.pushNamed(context, '/important');
+                                },
+                                child: Container(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                          padding: EdgeInsets.only(left: 15),
+                                          alignment: Alignment.centerLeft,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "Important",
+                                                style: googleFonts(
+                                                    20,
+                                                    Colors.black,
+                                                    FontWeight.normal),
+                                              ),
+                                              Text(
+                                                "0 Notes",
+                                                style: googleFonts(
+                                                    15,
+                                                    Colors.grey.shade800,
+                                                    FontWeight.normal),
+                                              ),
+                                            ],
+                                          )),
+                                      Container(
+                                        child: Image.asset(
+                                          'assets/images/panda_one.png',
+                                          width: 150,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Container(
+                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              DottedBorder(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 50),
+                                  strokeWidth: 1,
+                                  color: Colors.black,
+                                  borderType: BorderType.RRect,
+                                  radius: Radius.circular(30),
+                                  child: Stack(children: [
+                                    Column(
+                                      children: [
+                                        Container(
+                                            alignment: Alignment.centerLeft,
+                                            child: Icon(
+                                              Icons.folder,
+                                              size: 50,
+                                              color: Colors.greenAccent,
+                                            )),
+                                        Container(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              "Add new folder",
+                                              style: googleFonts(
+                                                  20,
+                                                  Colors.grey.shade800,
+                                                  FontWeight.normal),
+                                            )),
+                                      ],
+                                    ),
+                                  ])),
+                              Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: colorsOne),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(context, '/todo');
+                                    },
+                                    child: Container(
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.centerRight,
+                                            child: Image.asset(
+                                              "assets/images/panda_three.png",
+                                              width: 150,
+                                            ),
+                                          ),
+                                          Container(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                "To-Do",
+                                                style: googleFonts(
+                                                    20,
+                                                    Colors.black,
+                                                    FontWeight.normal),
+                                              )),
+                                        ],
+                                      ),
+                                    ),
+                                  )),
+                            ],
+                          )),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: colorsTwo),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.pushNamed(context, '/flag');
+                                },
+                                child: Container(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                          padding: EdgeInsets.only(left: 15),
+                                          alignment: Alignment.centerLeft,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "Flag",
+                                                style: googleFonts(
+                                                    20,
+                                                    Colors.black,
+                                                    FontWeight.normal),
+                                              ),
+                                              Text(
+                                                "0 Notes",
+                                                style: googleFonts(
+                                                    15,
+                                                    Colors.grey.shade800,
+                                                    FontWeight.normal),
+                                              ),
+                                            ],
+                                          )),
+                                      Container(
+                                        child: Image.asset(
+                                          'assets/images/panda_one.png',
+                                          width: 150,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )),
                         ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                      ))
+                  : HomeBarScreen(activeIndex),
+              SizedBox(
+                height: 30,
+              )
             ],
-          ), //  adsşgmasligmaksşgşasmgkasnkgmnaskşgnkşasgnkş
-          //asgşaskşgnasnkşgnşakgnkş
+          ), //
         ),
       ),
     );
@@ -516,8 +529,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       keyboardType: TextInputType.multiline,
                       decoration: InputDecoration(
                           alignLabelWithHint: true,
-                          labelText: _nameController.text.length == 0
-                              ? 'Enter Notes'
+                          labelStyle: TextStyle(color: Colors.black),
+                          fillColor: Colors.white10,
+                          border: InputBorder.none,
+                          filled: true),
+                    ),
+                    TextField(
+                      maxLines: 1,
+                      keyboardType: TextInputType.multiline,
+                      controller: _nameControllerTaskName,
+                      decoration: InputDecoration(
+                          alignLabelWithHint: true,
+                          labelText: _nameControllerTaskName.text.length == 0
+                              ? 'Enter Task Name'
                               : '',
                           labelStyle: TextStyle(color: Colors.black),
                           fillColor: Colors.white10,
@@ -530,12 +554,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         IconButton(
                           icon: Icon(
-                            Icons.draw,
+                            Icons.star,
                             size: 30,
-                            color: Colors.black,
+                            color: importantStartButton
+                                ? Colors.yellow
+                                : Colors.black,
                           ),
                           onPressed: () {
-                            print("Çiz butonuna basıldı");
+                            setState(() {
+                              importantStartButton = !importantStartButton;
+                            });
+                            print("İmportant butonuna basıldı");
                           },
                         ),
                         IconButton(
@@ -555,6 +584,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             print("Yapay Zeka butonuna basıldı");
                           },
                         ),
+                        InkWell(
+                          child: Icon(
+                            Icons.flag,
+                            size: 30,
+                            color: flagButton ? Colors.orange : Colors.black,
+                          ),
+                          onTap: () {
+                            setState(() {
+                              flagButton = !flagButton;
+                            });
+                            print("Flag button is : $flagButton");
+                          },
+                        ),
                         IconButton(
                             icon: Icon(
                               Icons.save_rounded,
@@ -564,10 +606,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             onPressed: () async {
                               print("Kaydet butonuna basıldı");
                               print(_nameController.text);
-                              _firestoreMethods
-                                  .addToMeetingHistory(_nameController.text);
+                              _firestoreMethods.addToMeetingHistory(
+                                  _nameController.text,
+                                  _nameControllerTaskName.text,
+                                  flagButton,
+                                  importantStartButton);
                               Navigator.pop(context);
+                              fetchData();
                               _nameController.clear();
+                              _nameControllerTaskName.clear();
                             }),
                       ],
                     ),
@@ -587,14 +634,13 @@ class _HomeScreenState extends State<HomeScreen> {
   AppBar appTopBar() {
     return AppBar(
       title: Container(
-        margin: EdgeInsets.only(right: 40),
-        alignment: Alignment.center,
+        alignment: Alignment.centerLeft,
         child: Text(
           "Panda Post",
           style: GoogleFonts.kanit(
               fontSize: 25,
               color: Colors.lightGreen.shade800,
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.normal),
         ),
       ),
     );
