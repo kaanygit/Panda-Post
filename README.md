@@ -34,7 +34,7 @@ Check [Contributing.md](Contributing.md) for contribution guidelines.
 ## Contact
 
 - Developer: yasin kaan yiğit
-- Linkedin : [Kaanyigit](https://www.linkedin.com/in/yasinkaanyigit1/)
+- Linkedin : [Linkedin](https://www.linkedin.com/in/yasinkaanyigit1/)
 
 ## License
 
