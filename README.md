@@ -29,7 +29,7 @@ Follow these steps for development:
 
 ## Contributing
 
-Check [Contributing.md](Contributing.md) for contribution guidelines.
+Check [Contributing.md](CONTRIBUTING.md) for contribution guidelines.
 
 ## Contact
 
