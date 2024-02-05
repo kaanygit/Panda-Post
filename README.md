@@ -33,8 +33,8 @@ Check [Contributing.md](Contributing.md) for contribution guidelines.
 
 ## Contact
 
-- Developer: [Your Full Name]
-- Email: [email@example.com]
+- Developer: yasin kaan yiğit
+- Linkedin : [Kaanyigit](https://www.linkedin.com/in/yasinkaanyigit1/)
 
 ## License
 
