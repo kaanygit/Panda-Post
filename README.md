@@ -19,6 +19,8 @@ Follow these steps to use the application:
 ## Screenshots
 
 ![Panda-Post Screenshots](screenshots.png)
+![Panda-Post Screenshots](app_screenshots.png)
+
 
 ## Development
 
