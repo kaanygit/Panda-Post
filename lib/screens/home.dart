@@ -508,19 +508,19 @@ class _HomeScreenState extends State<HomeScreen> {
               // TODO: Handle item 1 press
             },
           ),
-          ListTile(
-            title: Text(
-              'Panda Hungry',
-              style:
-                  googleFonts(20, Colors.lightGreen.shade800, FontWeight.w600),
-            ),
-            onTap: () {
-              print("Panda Hungry");
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => PandaHungryScreen()));
-              // TODO: Handle item 1 press
-            },
-          ),
+          // ListTile(
+          //   title: Text(
+          //     'Panda Hungry',
+          //     style:
+          //         googleFonts(20, Colors.lightGreen.shade800, FontWeight.w600),
+          //   ),
+          //   onTap: () {
+          //     print("Panda Hungry");
+          //     Navigator.push(context,
+          //         MaterialPageRoute(builder: (context) => PandaHungryScreen()));
+          //     // TODO: Handle item 1 press
+          //   },
+          // ),
           ListTile(
             title: Text(
               "Sign Out",

@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
         '/notes': (context) => NotesScreen(),
         '/important': (context) => ImportantScreen(),
         '/flag': (context) => FlagScreen(),
-        '/pandahungry': (context) => PandaHungryScreen(),
+        // '/pandahungry': (context) => PandaHungryScreen(),
         '/work': (context) => WorkScreen(),
         '/todo': (context) => TodoScreen(),
         '/editing': (context, {arguments}) =>
