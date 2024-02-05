@@ -9,12 +9,14 @@ class PandaHungryScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Panda Hungry'),
       ),
-      body: Container(
-        child: Column(
-          children: [
-            Text('Pnda hugryyy'),
-            Text('31'),
-          ],
+      body: Center(
+        child: Container(
+          child: Column(
+            children: [
+              Text('Pnda hugryyy'),
+              Text('31'),
+            ],
+          ),
         ),
       ),
     );

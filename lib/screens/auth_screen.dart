@@ -92,11 +92,12 @@ class AuthPage extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Container(
-                                        child: Image.network(
-                                      'http://pngimg.com/uploads/google/google_PNG19635.png',
-                                      fit: BoxFit.cover,
-                                      width: 50,
-                                    )),
+                                      child: Image.asset(
+                                        'assets/images/google_icon.png',
+                                        width: 50,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                                     SizedBox(
                                         width:
                                             5), // İki öğe arasına boşluk eklendi

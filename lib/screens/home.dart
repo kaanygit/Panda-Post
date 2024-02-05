@@ -11,6 +11,7 @@ import 'package:pandapostdev/screens/flag.dart';
 import 'package:pandapostdev/screens/important.dart';
 import 'package:pandapostdev/screens/notes.dart';
 import 'package:pandapostdev/screens/panda_hungry.dart';
+import 'package:pandapostdev/screens/work_screen.dart';
 import 'package:pandapostdev/services/notes_services.dart';
 import 'package:pandapostdev/widgets/home_bar_screen.dart';
 
@@ -47,6 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
     "Flag",
     "To-do"
   ];
+  dynamic noteFlagList = 0;
+  dynamic noteImportantList = 0;
+  dynamic noteWorkList = 0;
+  dynamic noteTodo = 0;
   int activeIndex = 0;
 
   @override
@@ -73,6 +78,20 @@ class _HomeScreenState extends State<HomeScreen> {
     await notesServices.fetchNotesData();
     setState(() {
       notesList = notesServices.notesList;
+      for (int i = 0; i < notesServices.notesList.length; i++) {
+        if (notesServices.notesList[i]['flag'] == true) {
+          noteFlagList++;
+        }
+        if (notesServices.notesList[i]['important'] == true) {
+          noteImportantList++;
+        }
+        if (notesServices.notesList[i]['work'] == true) {
+          noteWorkList++;
+        }
+        if (notesServices.notesList[i]['todo'] == true) {
+          noteTodo++;
+        }
+      }
       print(notesList);
     });
   }
@@ -218,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           Container(
                                               alignment: Alignment.centerRight,
                                               child: Text(
-                                                "0 Notes",
+                                                "${noteTodo} Notes",
                                                 style: googleFonts(
                                                     15,
                                                     Colors.grey.shade800,
@@ -263,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     FontWeight.normal),
                                               ),
                                               Text(
-                                                "0 Notes",
+                                                "${noteImportantList} Notes",
                                                 style: googleFonts(
                                                     15,
                                                     Colors.grey.shade800,
@@ -384,7 +403,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     FontWeight.normal),
                                               ),
                                               Text(
-                                                "0 Notes",
+                                                "${noteFlagList} Notes",
                                                 style: googleFonts(
                                                     15,
                                                     Colors.grey.shade800,
@@ -473,6 +492,19 @@ class _HomeScreenState extends State<HomeScreen> {
               print("Flag");
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => FlagScreen()));
+              // TODO: Handle item 1 press
+            },
+          ),
+          ListTile(
+            title: Text(
+              'Work',
+              style:
+                  googleFonts(20, Colors.lightGreen.shade800, FontWeight.w600),
+            ),
+            onTap: () {
+              print("Work Screen");
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => WorkScreen()));
               // TODO: Handle item 1 press
             },
           ),
@@ -610,7 +642,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   _nameController.text,
                                   _nameControllerTaskName.text,
                                   flagButton,
-                                  importantStartButton);
+                                  importantStartButton,
+                                  false);
                               Navigator.pop(context);
                               fetchData();
                               _nameController.clear();

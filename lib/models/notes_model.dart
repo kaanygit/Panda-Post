@@ -6,6 +6,8 @@ class NotesModel {
   final Timestamp notesDate;
   final bool flag;
   final bool important;
+  final bool lastEdited;
+  final bool work;
 
   NotesModel({
     required this.notesTaskName,
@@ -13,6 +15,8 @@ class NotesModel {
     required this.notesDate,
     required this.flag,
     required this.important,
+    required this.lastEdited,
+    required this.work,
   });
 
   factory NotesModel.fromMap(Map<String, dynamic> map) {
@@ -21,6 +25,8 @@ class NotesModel {
         notesTaskName: map['notesTaskName'] ?? '',
         notesDate: map['notesDate'] ?? Timestamp.now(),
         flag: map['flag'] ?? false,
-        important: map['important'] ?? false);
+        important: map['important'] ?? false,
+        lastEdited: map['lastEdited'] ?? Timestamp.now(),
+        work: map['work'] ?? false);
   }
 }

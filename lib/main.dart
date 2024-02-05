@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:pandapostdev/constants/splashScreen.dart';
 import 'package:pandapostdev/screens/auth_screen.dart';
+import 'package:pandapostdev/screens/editing.dart';
 import 'package:pandapostdev/screens/flag.dart';
 import 'package:pandapostdev/screens/home.dart';
 import 'package:pandapostdev/screens/important.dart';
@@ -54,7 +55,9 @@ class MyApp extends StatelessWidget {
         '/flag': (context) => FlagScreen(),
         '/pandahungry': (context) => PandaHungryScreen(),
         '/work': (context) => WorkScreen(),
-        '/todo': (context) => TodoScreen()
+        '/todo': (context) => TodoScreen(),
+        '/editing': (context, {arguments}) =>
+            EditingScreen(notesData: arguments),
       },
     );
   }

@@ -10,7 +10,13 @@ class NotDefined extends StatefulWidget {
 }
 
 class _NotDefinedState extends State<NotDefined> {
-  final List<String> scrollAxisRowList = ["Work", "Important", "Flag", "To do"];
+  final List<String> scrollAxisRowList = [
+    "Work",
+    "Important",
+    "Flag",
+    "To do",
+    "All Notes"
+  ];
 
   @override
   Widget build(BuildContext context) {

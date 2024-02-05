@@ -10,7 +10,7 @@ class MySplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlutterSplashScreen.fadeIn(
       backgroundColor: Colors.white,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 3000),
       onInit: () {
         debugPrint("Splash Screen On Init");
       },

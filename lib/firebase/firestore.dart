@@ -11,8 +11,8 @@ class FirestoreMethods {
       .collection('notes')
       .snapshots();
 
-  void addToMeetingHistory(
-      String meetingName, String taskName, bool flags, bool important) async {
+  void addToMeetingHistory(String meetingName, String taskName, bool flags,
+      bool important, bool work) async {
     try {
       await _firestore
           .collection('users')
@@ -24,6 +24,8 @@ class FirestoreMethods {
         'flag': flags,
         'important': important,
         'notesDate': DateTime.now(),
+        'lastEdited': DateTime.now(),
+        'work': work,
       });
     } catch (e) {
       print("Hata : $e");
@@ -43,6 +45,8 @@ class FirestoreMethods {
       for (QueryDocumentSnapshot<Map<String, dynamic>> document
           in snapshot.docs) {
         Map<String, dynamic> data = document.data();
+        print(document.id);
+        data['id'] = document.id;
         notesList.add(data);
       }
 
@@ -50,6 +54,42 @@ class FirestoreMethods {
     } catch (e) {
       print("Hata : $e");
       return []; // Hata durumunda boş bir liste döndür
+    }
+  }
+
+  Future<void> deleteNoteFirestore(String documentId) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('notes')
+          .doc(documentId)
+          .delete();
+      print("Veri başarıyla silindi");
+    } catch (e) {
+      print("Not silinirken bir hata oluştu : $e");
+    }
+  }
+
+  Future<void> updateNoteFirestore(String newNotesName, String newTaskName,
+      String documentId, bool newFlag, bool newImportant) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('notes')
+          .doc(documentId)
+          .update({
+        'notesTaskName': newNotesName,
+        'notesName': newNotesName,
+        'lastEdited': DateTime.now(),
+        'flag': newFlag,
+        'important': newImportant
+      });
+
+      print("Veri basarıyla güncellendi");
+    } catch (e) {
+      print("Veri Guncellenirken bir hata oluştu : $e");
     }
   }
 }

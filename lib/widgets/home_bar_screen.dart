@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:pandapostdev/constants/constant.dart';
 import 'package:pandapostdev/constants/fonts.dart';
+import 'package:pandapostdev/screens/editing.dart';
 import 'package:pandapostdev/screens/not_defined.dart';
 import 'package:pandapostdev/services/notes_services.dart';
 import 'package:pandapostdev/widgets/loading_widget.dart';
@@ -37,21 +37,21 @@ class _HomeBarScreenState extends State<HomeBarScreen> {
     await notesServices.fetchNotesData();
     setState(() {
       notesList = notesServices.notesList;
-      loadingBoolean = true;
       for (int i = 0; i < notesList.length; i++) {
-        if (notesList[i]['flag'] == true) {
+        if (notesList[i]['flag'] == true && noteFlagList.length < 5) {
           noteFlagList.add(notesList[i]);
         }
-        if (notesList[i]['important'] == true) {
+        if (notesList[i]['important'] == true && noteImportantList.length < 5) {
           noteImportantList.add(notesList[i]);
         }
-        if (notesList[i]['work'] == true) {
+        if (notesList[i]['work'] == true && noteWorkList.length < 5) {
           noteWorkList.add(notesList[i]);
         }
-        if (notesList[i]['todo'] == true) {
+        if (notesList[i]['todo'] == true && noteTodo.length < 5) {
           noteTodo.add(notesList[i]);
         }
       }
+      loadingBoolean = true;
     });
   }
 
@@ -82,65 +82,79 @@ class _HomeBarScreenState extends State<HomeBarScreen> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(5),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => EditingScreen(
+                                                notesData: noteWorkList[i])));
+                                  },
+                                  child: Container(
+                                    child: Column(
                                       children: [
-                                        Text(
-                                          noteWorkList[i]['notesTaskName'] ??
-                                              " ",
-                                          style: googleFonts(
-                                            20,
-                                            Colors.lightGreen.shade900,
-                                            FontWeight.normal,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              noteWorkList[i]
+                                                      ['notesTaskName'] ??
+                                                  " ",
+                                              style: googleFonts(
+                                                20,
+                                                Colors.lightGreen.shade900,
+                                                FontWeight.normal,
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.flag,
+                                              color: noteWorkList[i]['flag']
+                                                  ? Colors.red
+                                                  : Colors.grey.shade800,
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsets.symmetric(vertical: 5),
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              truncateText(
+                                                noteWorkList[i]['notesName'] ??
+                                                    "",
+                                                maxChars: 50,
+                                              ),
+                                              style: googleFonts(
+                                                18,
+                                                colorsTwo,
+                                                FontWeight.normal,
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                        Icon(
-                                          Icons.flag,
-                                          color: noteWorkList[i]['flag']
-                                              ? Colors.red
-                                              : Colors.grey.shade800,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              formatTimestamp(
+                                                noteWorkList[i]["notesDate"],
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.star,
+                                              color: noteWorkList[i]
+                                                      ['important']
+                                                  ? Colors.yellow
+                                                  : Colors.grey.shade800,
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 5),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          truncateText(
-                                            noteWorkList[i]['notesName'] ?? "",
-                                            maxChars: 100,
-                                          ),
-                                          style: googleFonts(
-                                            18,
-                                            colorsTwo,
-                                            FontWeight.normal,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          formatTimestamp(
-                                            noteWorkList[i]["notesDate"],
-                                          ),
-                                        ),
-                                        Icon(
-                                          Icons.star,
-                                          color: noteWorkList[i]['important']
-                                              ? Colors.yellow
-                                              : Colors.grey.shade800,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -166,65 +180,80 @@ class _HomeBarScreenState extends State<HomeBarScreen> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(5),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => EditingScreen(
+                                                notesData:
+                                                    noteImportantList[j])));
+                                  },
+                                  child: Container(
+                                    child: Column(
                                       children: [
-                                        Text(
-                                          noteImportantList[j]
-                                                  ['notesTaskName'] ??
-                                              " ",
-                                          style: googleFonts(
-                                            20,
-                                            Colors.lightGreen.shade900,
-                                            FontWeight.normal,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              noteImportantList[j]
+                                                      ['notesTaskName'] ??
+                                                  " ",
+                                              style: googleFonts(
+                                                20,
+                                                Colors.lightGreen.shade900,
+                                                FontWeight.normal,
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.flag,
+                                              color: noteImportantList[j]
+                                                      ['flag']
+                                                  ? Colors.red
+                                                  : Colors.grey.shade800,
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsets.symmetric(vertical: 5),
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              truncateText(
+                                                noteImportantList[j]
+                                                        ['notesName'] ??
+                                                    "",
+                                                maxChars: 50,
+                                              ),
+                                              style: googleFonts(
+                                                18,
+                                                colorsTwo,
+                                                FontWeight.normal,
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                        Icon(
-                                          Icons.flag,
-                                          color: noteImportantList[j]['flag']
-                                              ? Colors.red
-                                              : Colors.grey.shade800,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              formatTimestamp(
+                                                noteImportantList[j]
+                                                    ["notesDate"],
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.star,
+                                              color: Colors.yellow,
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 5),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          truncateText(
-                                            noteImportantList[j]['notesName'] ??
-                                                "",
-                                            maxChars: 100,
-                                          ),
-                                          style: googleFonts(
-                                            18,
-                                            colorsTwo,
-                                            FontWeight.normal,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          formatTimestamp(
-                                            noteImportantList[j]["notesDate"],
-                                          ),
-                                        ),
-                                        Icon(
-                                          Icons.star,
-                                          color: Colors.yellow,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -250,63 +279,77 @@ class _HomeBarScreenState extends State<HomeBarScreen> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(5),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => EditingScreen(
+                                                notesData: noteFlagList[k])));
+                                  },
+                                  child: Container(
+                                    child: Column(
                                       children: [
-                                        Text(
-                                          noteFlagList[k]['notesTaskName'] ??
-                                              " ",
-                                          style: googleFonts(
-                                            20,
-                                            Colors.lightGreen.shade900,
-                                            FontWeight.normal,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              noteFlagList[k]
+                                                      ['notesTaskName'] ??
+                                                  " ",
+                                              style: googleFonts(
+                                                20,
+                                                Colors.lightGreen.shade900,
+                                                FontWeight.normal,
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.flag,
+                                              color: Colors.red,
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsets.symmetric(vertical: 5),
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              truncateText(
+                                                noteFlagList[k]['notesName'] ??
+                                                    "",
+                                                maxChars: 50,
+                                              ),
+                                              style: googleFonts(
+                                                18,
+                                                colorsTwo,
+                                                FontWeight.normal,
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                        Icon(
-                                          Icons.flag,
-                                          color: Colors.red,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              formatTimestamp(
+                                                noteFlagList[k]["notesDate"],
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.star,
+                                              color: noteFlagList[k]
+                                                      ['important']
+                                                  ? Colors.yellow
+                                                  : Colors.grey.shade800,
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 5),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          truncateText(
-                                            noteFlagList[k]['notesName'] ?? "",
-                                            maxChars: 100,
-                                          ),
-                                          style: googleFonts(
-                                            18,
-                                            colorsTwo,
-                                            FontWeight.normal,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          formatTimestamp(
-                                            noteFlagList[k]["notesDate"],
-                                          ),
-                                        ),
-                                        Icon(
-                                          Icons.star,
-                                          color: noteFlagList[k]['important']
-                                              ? Colors.yellow
-                                              : Colors.grey.shade800,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -332,17 +375,5 @@ class _HomeBarScreenState extends State<HomeBarScreen> {
             ),
           )
         : LoadingWidget(5, 100);
-  }
-
-  String formatTimestamp(Timestamp timestamp) {
-    DateTime dateTime = timestamp.toDate();
-    return DateFormat('dd/MM/yyyy HH:mm').format(dateTime);
-  }
-
-  String truncateText(String text, {int maxChars = 30}) {
-    if (text.length <= maxChars) {
-      return text;
-    }
-    return text.substring(0, maxChars) + '...';
   }
 }
