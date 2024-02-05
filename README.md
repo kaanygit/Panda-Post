@@ -1,4 +1,4 @@
-# Panda-Post Note-Taking App
+# Panda-Post Note-Taking App / Version - 1.0.0
 
 Panda-Post is a fun mobile application that allows you to take notes with an adorable panda. You can write and edit your notes easily, and store them with your panda friend.
 
